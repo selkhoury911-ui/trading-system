@@ -8,7 +8,7 @@ An automated daily trading system that uses machine learning to predict stock ma
 
 ## 🌐 Live Application
 
-👉 **[Click here to access the live app](https://your-app-url.streamlit.app)**
+👉 👉 **[Click here to access the live app](https://trading-system-gnvcjp4j8kqekggfhwpfl2.streamlit.app)**
 
 ## Overview
 
