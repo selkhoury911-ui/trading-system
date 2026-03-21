@@ -214,10 +214,13 @@ if model is None:
     st.error(f"NO MODEL FOR {selected_ticker}. TRAIN FIRST.")
     st.stop()
 
+PRED_THRESHOLD = 0.4  # Lower than default 0.5 to compensate for model's DOWN bias
+
 with st.spinner("RUNNING BACKTEST..."):
     X = df[FEATURE_COLUMNS].copy().replace([np.inf, -np.inf], np.nan).fillna(0)
     X_scaled = scaler.transform(X)
-    predictions = pd.Series(model.predict(X_scaled))
+    proba = model.predict_proba(X_scaled)
+    predictions = pd.Series((proba[:, 1] >= PRED_THRESHOLD).astype(int))
     close_prices = df["Close"].reset_index(drop=True)
 
     strat = buy_and_sell_strategy(predictions, close_prices, initial_cash)
