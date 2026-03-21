@@ -32,7 +32,7 @@ st.markdown("""
 
     /* Sidebar nav title */
     [data-testid="stSidebarNav"]::before {
-        content: "TRADING SYSTEM";
+        content: "AUTOMATED TRADING SYSTEM";
         display: block;
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.72rem;
@@ -382,13 +382,46 @@ st.markdown('<div class="bb-divider"></div>', unsafe_allow_html=True)
 # ---------------------------------------------------------------------------
 st.markdown(f'<div class="bb-panel-header">{selected_ticker} — PRICE & MOVING AVERAGES ({horizon_label})</div>', unsafe_allow_html=True)
 
-if not transformed_df.empty and "Date" in transformed_df.columns:
-    price_chart = transformed_df[["Date", "Close", "SMA_5", "SMA_20", "EMA_12"]].dropna().set_index("Date")
-    st.line_chart(price_chart, color=["#00d4aa", "#ff6600", "#ffffff", "#5a5a6a"])
-else:
-    close_col = "Close" if "Close" in display_df.columns else None
-    if close_col and "Date" in display_df.columns:
-        st.line_chart(display_df.set_index("Date")[["Close"]])
+if not display_df.empty and "Date" in display_df.columns:
+    import plotly.graph_objects as go
+
+    ohlc = display_df[["Date", "Open", "High", "Low", "Close"]].dropna()
+    mas  = transformed_df[["Date", "SMA_5", "SMA_20", "EMA_12"]].dropna() if not transformed_df.empty else pd.DataFrame()
+
+    fig = go.Figure()
+
+    # Candlestick
+    fig.add_trace(go.Candlestick(
+        x=ohlc["Date"],
+        open=ohlc["Open"], high=ohlc["High"],
+        low=ohlc["Low"],   close=ohlc["Close"],
+        name="Price",
+        increasing_line_color="#00d4aa", increasing_fillcolor="#00d4aa",
+        decreasing_line_color="#ff4444", decreasing_fillcolor="#ff4444",
+    ))
+
+    # Moving average overlays
+    if not mas.empty:
+        fig.add_trace(go.Scatter(x=mas["Date"], y=mas["EMA_12"], name="EMA_12",
+            line=dict(color="#ff6600", width=1.2)))
+        fig.add_trace(go.Scatter(x=mas["Date"], y=mas["SMA_20"], name="SMA_20",
+            line=dict(color="#ffffff", width=1.2, dash="dot")))
+        fig.add_trace(go.Scatter(x=mas["Date"], y=mas["SMA_5"], name="SMA_5",
+            line=dict(color="#5a5a9a", width=1)))
+
+    fig.update_layout(
+        paper_bgcolor="#0a0a0a", plot_bgcolor="#0f0f14",
+        font=dict(family="IBM Plex Mono", color="#8a8a9a", size=11),
+        xaxis=dict(gridcolor="#1a1a2e", showgrid=True, rangeslider_visible=False,
+                   tickfont=dict(color="#5a5a6a")),
+        yaxis=dict(gridcolor="#1a1a2e", showgrid=True, tickprefix="$",
+                   tickfont=dict(color="#5a5a6a")),
+        legend=dict(bgcolor="#0f0f14", bordercolor="#1a1a2e", borderwidth=1,
+                    font=dict(size=10)),
+        margin=dict(l=0, r=0, t=10, b=0),
+        height=340,
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 with st.expander("VIEW RAW PRICE DATA"):
     show_cols = [c for c in ["Date", "Open", "High", "Low", "Close", "Volume"] if c in display_df.columns]

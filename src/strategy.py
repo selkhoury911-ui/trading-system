@@ -45,27 +45,32 @@ def buy_and_sell_strategy(predictions: pd.Series, close_prices: pd.Series,
     for i in range(len(predictions)):
         price = close_prices.iloc[i]
         pred = predictions.iloc[i]
+        portfolio_value = cash + shares * price
 
-        if pred == 1 and cash >= price:
-            # BUY: invest 50% of available cash
-            invest_amount = cash * 0.5
+        if pred == 1:
+            # BUY: invest 20% of total portfolio value in new shares.
+            # Sizing off portfolio value (not just cash) keeps the strategy
+            # active throughout — it will sell some shares to raise cash if needed.
+            invest_amount = portfolio_value * 0.20
+            invest_amount = min(invest_amount, cash)   # never spend more than we have
             shares_to_buy = int(invest_amount / price)
-            if shares_to_buy < 1:
-                shares_to_buy = 1
-            if cash >= shares_to_buy * price:
+            if shares_to_buy >= 1:
                 shares += shares_to_buy
                 cash -= shares_to_buy * price
                 action = f"BUY x{shares_to_buy}"
             else:
                 action = "HOLD"
         elif pred == 0 and shares > 0:
-            # SELL: sell 50% of held shares (minimum 1)
-            shares_to_sell = max(1, shares // 2)
+            # SELL: liquidate shares worth 20% of total portfolio value (minimum 1).
+            # Sizing off portfolio value ensures we keep meaningful positions.
+            sell_value = portfolio_value * 0.20
+            shares_to_sell = max(1, int(sell_value / price))
+            shares_to_sell = min(shares_to_sell, shares)  # can't sell more than held
             shares -= shares_to_sell
             cash += shares_to_sell * price
             action = f"SELL x{shares_to_sell}"
         else:
-            # HOLD: can't buy (no cash) or can't sell (no shares)
+            # HOLD: no valid action available
             action = "HOLD"
 
         portfolio_value = cash + (shares * price)

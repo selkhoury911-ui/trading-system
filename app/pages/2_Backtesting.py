@@ -29,7 +29,7 @@ st.markdown("""
     header[data-testid="stHeader"] { background-color: #0a0a0a !important; }
 
     [data-testid="stSidebarNav"]::before {
-        content: "TRADING SYSTEM";
+        content: "AUTOMATED TRADING SYSTEM";
         display: block;
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.72rem;
