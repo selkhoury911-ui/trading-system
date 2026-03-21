@@ -28,18 +28,6 @@ st.markdown("""
     section[data-testid="stSidebar"] * { color: #8a8a9a !important; }
     header[data-testid="stHeader"] { background-color: #0a0a0a !important; }
 
-    [data-testid="stSidebarNav"]::before {
-        content: "AUTOMATED TRADING SYSTEM";
-        display: block;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: #ff6600 !important;
-        letter-spacing: 0.18em;
-        padding: 1.2rem 1rem 0.8rem 1rem;
-        border-bottom: 1px solid #1a1a2e;
-        margin-bottom: 0.4rem;
-    }
     [data-testid="stSidebarNavLink"] {
         font-family: 'IBM Plex Mono', monospace !important;
         font-size: 0.78rem !important;
@@ -148,6 +136,21 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 </style>
+""", unsafe_allow_html=True)
+
+# Sidebar title — injected as real HTML, more reliable than ::before CSS
+st.sidebar.markdown("""
+<div style="
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ff6600;
+    letter-spacing: 0.18em;
+    padding: 1.2rem 1rem 0.8rem 1rem;
+    border-bottom: 1px solid #1a1a2e;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+">AUTOMATED TRADING SYSTEM</div>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
