@@ -356,7 +356,7 @@ st.markdown("""
 <div class="bb-panel">
     <div class="bb-panel-header">Development Team</div>
     <div class="bb-panel-body">
-        University Group Project — Python for Data Analysis<br>
+        IE University - Master of Business Analytics and Data Science Group Project — Python for Data Analysis<br>
         Team Members: Selim El Khoury, Tenaw Belete, Jan Wilhelm Pietsch, Nuria Etemadi, Pablo Infante
     </div>
 </div>
