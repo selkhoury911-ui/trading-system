@@ -186,15 +186,33 @@ def predict(model, scaler, row: pd.Series) -> dict:
 
 
 @st.cache_data(ttl=3600)
-def load_processed(ticker: str) -> pd.DataFrame:
-    """Load a processed CSV for peer comparison charts."""
+def load_peer_prices(ticker: str, start: str, end: str) -> pd.DataFrame:
+    """
+    Get closing prices for a ticker for peer comparison.
+    Tries processed CSV first (fast, no API call).
+    Falls back to SimFin API if CSV not available (works on cloud deployments).
+    """
+    # Try local processed CSV first
     fp = os.path.join(PROCESSED_DIR, f"{ticker}_processed.csv")
-    if not os.path.exists(fp):
+    if os.path.exists(fp):
+        df = pd.read_csv(fp)
+        if "Date" in df.columns and "Close" in df.columns:
+            df["Date"] = pd.to_datetime(df["Date"])
+            cutoff = pd.Timestamp(start)
+            return df[df["Date"] >= cutoff][["Date", "Close"]].copy()
+
+    # Fall back to SimFin API
+    try:
+        client = get_simfin_client()
+        df = client.get_share_prices(ticker, start, end)
+        if df.empty:
+            return pd.DataFrame()
+        df = df.rename(columns={"Last Closing Price": "Close"})
+        if "Date" in df.columns:
+            df["Date"] = pd.to_datetime(df["Date"])
+        return df[["Date", "Close"]].dropna()
+    except Exception:
         return pd.DataFrame()
-    df = pd.read_csv(fp)
-    if "Date" in df.columns:
-        df["Date"] = pd.to_datetime(df["Date"])
-    return df
 
 
 # ---------------------------------------------------------------------------
@@ -364,13 +382,12 @@ st.markdown('<div style="font-family:\'IBM Plex Mono\',monospace; font-size:0.72
 
 # Load processed data for all tickers and filter to time horizon
 peer_frames = {}
-cutoff = pd.Timestamp(end_date) - pd.Timedelta(days=horizon_days)
-for t in TICKERS:
-    df_t = load_processed(t)
-    if not df_t.empty and "Date" in df_t.columns and "Close" in df_t.columns:
-        df_t = df_t[df_t["Date"] >= cutoff].copy()
-        if len(df_t) > 5:
-            peer_frames[t] = df_t.set_index("Date")["Close"]
+with st.spinner("Fetching peer data..."):
+    for t in TICKERS:
+        df_t = load_peer_prices(t, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
+        if not df_t.empty and "Date" in df_t.columns and "Close" in df_t.columns:
+            if len(df_t) > 5:
+                peer_frames[t] = df_t.set_index("Date")["Close"]
 
 if peer_frames:
     norm_df = pd.DataFrame(peer_frames)
