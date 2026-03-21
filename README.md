@@ -24,13 +24,15 @@ trading-system/
 ├── app/                    # Streamlit web application
 │   ├── Home.py             # Home page (main entry point)
 │   ├── pages/
-│   │   └── 1_Go_Live.py   # Real-time predictions page
+│   │   ├── 1_Go_Live.py        # Real-time predictions page
+│   │   └── 2_Backtesting.py    # Historical strategy backtesting page
 │   └── .streamlit/
 │       └── secrets.toml.example  # API key template
 ├── src/                    # Core Python modules
-│   ├── etl.py              # ETL pipeline
+│   ├── etl.py              # ETL pipeline (single source of truth for feature engineering)
 │   ├── model.py            # ML model training & export
-│   └── pysimfin.py         # SimFin API wrapper class
+│   ├── pysimfin.py         # SimFin API wrapper class
+│   └── strategy.py         # Trading strategy (Buy-and-Sell & Buy-and-Hold)
 ├── data/                   # Raw and processed data (not in Git)
 │   └── processed/          # Output of ETL pipeline
 ├── models/                 # Trained model files (.pkl)
@@ -73,13 +75,23 @@ pip install -r requirements.txt
 ### 4. Run the ETL pipeline
 
 ```bash
-python src/etl.py --all
+python src/etl.py
+```
+
+To process a single ticker only:
+```bash
+python src/etl.py --ticker AAPL
 ```
 
 ### 5. Train the ML models
 
 ```bash
-python src/model.py --all
+python src/model.py
+```
+
+To train a single ticker only:
+```bash
+python src/model.py --ticker AAPL
 ```
 
 ### 6. Run the Streamlit app
