@@ -357,7 +357,7 @@ st.markdown("""
     <div class="bb-panel-header">Development Team</div>
     <div class="bb-panel-body">
         University Group Project — Python for Data Analysis<br>
-        Team Members: [Add your names here]
+        Team Members: Selim El Khoury, Tenaw Belete, Jan Wilhelm Pietsch, Nuria Etemadi, Pablo Infante
     </div>
 </div>
 """, unsafe_allow_html=True)
