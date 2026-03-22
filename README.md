@@ -45,7 +45,7 @@ trading-system/
 └── README.md               # This file
 ```
 
-## Installation & Setup
+## Local Installation & Setup
 
 ### 1. Clone the repository
 
