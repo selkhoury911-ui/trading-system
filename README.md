@@ -15,7 +15,7 @@ An automated daily trading system that uses machine learning to predict stock ma
 This system consists of two main parts:
 
 1. **Data Analytics Module** — An ETL pipeline processes historical stock data from SimFin, then a Logistic Regression model is trained to predict whether the next day's closing price will go UP or DOWN.
-2. **Web Application** — A Streamlit app fetches real-time data from the SimFin API, applies the same transformations, and uses the trained model to generate live trading signals.
+2. **Web Application** — A three-page Streamlit app: the Go Live page fetches real-time data from the SimFin API and generates live trading signals; the Backtesting page runs the ML strategy against a buy-and-hold baseline with full performance metrics.
 
 ## Project Structure
 
@@ -33,8 +33,8 @@ trading-system/
 │   ├── model.py            # ML model training & export
 │   ├── pysimfin.py         # SimFin API wrapper class
 │   └── strategy.py         # Trading strategy (Buy-and-Sell & Buy-and-Hold)
-├── data/                   # Raw and processed data (not in Git)
-│   └── processed/          # Output of ETL pipeline
+├── data/                   # Raw bulk CSVs (not in Git — download from SimFin)
+│   └── processed/          # Feature-engineered CSVs (committed for Streamlit deployment)
 ├── models/                 # Trained model files (.pkl)
 ├── notebooks/              # Jupyter notebooks for exploration
 ├── docs/                   # Executive summary
@@ -48,7 +48,7 @@ trading-system/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/trading-system.git
+git clone https://github.com/selkhoury911-ui/trading-system.git
 cd trading-system
 ```
 
