@@ -188,8 +188,8 @@ st.markdown(f"""
 
 # Strategy rules
 st.markdown("""
-<div class="bb-strategy-rule">▲ MODEL PREDICTS UP  →  BUY SHARES (50% OF CASH)</div>
-<div class="bb-strategy-rule">▼ MODEL PREDICTS DOWN  →  SELL SHARES (50% OF HOLDINGS)</div>
+<div class="bb-strategy-rule">▲ MODEL PREDICTS UP  →  BUY SHARES (20% OF CASH)</div>
+<div class="bb-strategy-rule">▼ MODEL PREDICTS DOWN  →  SELL SHARES (20% OF HOLDINGS)</div>
 <div class="bb-strategy-rule">— CANNOT EXECUTE  →  HOLD POSITION</div>
 """, unsafe_allow_html=True)
 
